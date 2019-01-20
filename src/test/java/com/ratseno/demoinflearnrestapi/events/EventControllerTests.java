@@ -22,6 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author onestar
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -93,6 +97,18 @@ public class EventControllerTests {
 					.content(objectMapper.writeValueAsString(event)))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
+	}
+	
+	
+	@Test
+	public void createEvent_Bad_Request_Empty_Input() throws Exception {
+		EventDto eventDto = EventDto.builder().build();
+		
+		this.mockMvc.perform(post("/api/events")
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.content(this.objectMapper.writeValueAsString(eventDto)))
+				.andExpect(status().isBadRequest());
+
 	}
 
 }

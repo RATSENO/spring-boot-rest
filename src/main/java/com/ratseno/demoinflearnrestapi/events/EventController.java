@@ -1,6 +1,7 @@
 package com.ratseno.demoinflearnrestapi.events;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 import java.net.URI;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value="/api/events", produces=MediaTypes.HAL_JSON_UTF8_VALUE)
@@ -31,7 +34,10 @@ public class EventController {
 	
 	
 	@PostMapping
-	public ResponseEntity createEvents(@RequestBody EventDto eventDto) {
+	public ResponseEntity createEvents(@RequestBody @Valid EventDto eventDto, Errors errors) {
+		if(errors.hasErrors()) {
+			return ResponseEntity.badRequest().build();
+		}
 		Event event = modelMapper.map(eventDto, Event.class);
 		Event newEvent = this.eventRepository.save(event);
 		URI createdUri =  linkTo(EventController.class).slash(newEvent.getId()).toUri();
