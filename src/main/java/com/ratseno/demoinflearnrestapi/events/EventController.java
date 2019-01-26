@@ -43,13 +43,13 @@ public class EventController {
 	@PostMapping
 	public ResponseEntity createEvents(@RequestBody @Valid EventDto eventDto, Errors errors) {
 		if(errors.hasErrors()) {
-			badRequest(errors);
+			return badRequest(errors);
 		}
 		
 		eventValidator.validate(eventDto, errors);
 
 		if(errors.hasErrors()) {
-			badRequest(errors);
+			return badRequest(errors);
 		}
 		Event event = modelMapper.map(eventDto, Event.class);
 		event.update();
